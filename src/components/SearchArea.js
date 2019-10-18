@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {changeBatchState} from '../redux/actions/actions';
@@ -15,12 +16,16 @@ import {
 } from 'react-native-responsive-screen';
 import {getBatch, getSearch} from '../api/api';
 import getModel from '../constants/models';
+import Icon from 'react-native-vector-icons/Ionicons';
+import COLORS from '../constants/colors';
 
 class SearchArea extends Component {
   state = {
-    searchMonth: this.props.month,
-    searchYear: this.props.year,
-    searchText: this.props.text,
+    searchMonth: null,
+    searchYear: null,
+    searchText: null,
+    searchMessenger: null,
+    searchGuest: null,
   };
 
   _generateMonthPicker = () => {
@@ -40,7 +45,6 @@ class SearchArea extends Component {
   };
   _onPressReset = () => {
     this.props.resetSearch();
-    this.props.setSearchState();
     this._getData();
   };
   async _getData() {
@@ -65,6 +69,8 @@ class SearchArea extends Component {
         this.state.searchMonth,
         this.state.searchYear,
         this.state.searchText,
+        this.state.searchMessenger,
+        this.state.searchGuest
       );
       this.props.setLoading(false);
       this.props.changeBatchState(data, this.props.category);
@@ -73,57 +79,88 @@ class SearchArea extends Component {
   render() {
     return (
       <View style={styles.searchContainer}>
-        <View style={styles.datesContainer}>
-          <TouchableOpacity
-            style={styles.buttonReset}
-            onPress={this._onPressReset.bind(this)}>
-            <Text style={styles.buttonText}>リセット</Text>
-          </TouchableOpacity>
-          <View style={styles.dateSelectorMonth}>
+        <View style={styles.rowContainer}>
+          <View style={styles.leftPicker}>
             <RNPickerSelect
               style={pickerSelectStyles}
               onValueChange={value => {
-                this.props.setSearchState(value);
                 this.setState({searchMonth: value});
               }}
               placeholder={{label: '月をご選択', value: null}}
               items={this._generateMonthPicker()}
               useNativeAndroidPickerStyle={false}
-              value={this.state.searchMonth}
             />
           </View>
 
-          <View style={styles.dateSelectorYear}>
+          <View style={styles.rightPicker}>
             <RNPickerSelect
               style={pickerSelectStyles}
               onValueChange={value => {
-                this.props.setSearchState(value);
                 this.setState({searchYear: value});
               }}
               placeholder={{label: '年をご選択', value: null}}
               items={this._generateYearPicker()}
               useNativeAndroidPickerStyle={false}
-              value={this.state.searchYear}
             />
           </View>
+
+          <TouchableOpacity
+            style={styles.searchTouchable}
+            onPress={this._onPressSearch.bind(this)}>
+            <Icon
+              name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
+              size={wp(7)}
+              color={COLORS.blue}
+              style={styles.searchButton}
+            />
+          </TouchableOpacity>
         </View>
-        <View style={styles.bottomRowContainer}>
+
+        <View style={styles.rowContainer}>
           <TextInput
-            style={styles.textInput}
-            placeHolder="タイトルやタッグ"
+            style={styles.keywordInput}
+            placeholder="キーワード"
             onChangeText={text => {
-              this.props.setSearchState(text);
               this.setState({searchText: text});
             }}
-            value={this.state.searchText}
           />
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.buttonSearch}
-              onPress={this._onPressSearch.bind(this)}>
-              <Text style={styles.buttonText}>探索</Text>
+              onPress={this._onPressReset.bind(this)}>
+              <Text style={styles.resetButtonText}>中止</Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        <View style={styles.rowContainer}>
+          {this.props.messengers.length === 0 ? null : (
+            <View style={styles.leftPicker}>
+              <RNPickerSelect
+                style={pickerSelectStyles}
+                onValueChange={value => {
+                  this.setState({searchMessenger: value});
+                }}
+                placeholder={{label: 'メッセンジャー', value: null}}
+                items={this.props.messengers}
+                useNativeAndroidPickerStyle={false}
+              />
+            </View>
+          )}
+
+          {this.props.guests.length === 0 ? null : (
+            <View style={styles.rightPicker}>
+              <RNPickerSelect
+                style={pickerSelectStyles}
+                onValueChange={value => {
+                  this.setState({searchGuest: value});
+                }}
+                placeholder={{label: 'ゲスト', value: null}}
+                items={this.props.guests}
+                useNativeAndroidPickerStyle={false}
+              />
+            </View>
+          )}
         </View>
       </View>
     );
@@ -138,31 +175,27 @@ export default connect(
 const styles = StyleSheet.create({
   searchContainer: {
     alignSelf: 'center',
-    height: hp(17),
+    height: hp(25),
     width: wp(90),
   },
-  datesContainer: {
+  rowContainer: {
     flex: 1,
     flexDirection: 'row',
     marginTop: hp(2),
   },
-  dateSelectorMonth: {
+  leftPicker: {
     flex: 2,
-    marginHorizontal: wp(2),
+    marginRight: wp(1),
   },
-  dateSelectorYear: {
+  rightPicker: {
     flex: 2,
     marginLeft: wp(2),
   },
-  bottomRowContainer: {
-    marginTop: hp(2),
-    flexDirection: 'row',
-    flex: 1,
-  },
-  textInput: {
+  keywordInput: {
     flex: 5,
+    paddingLeft: wp(2),
     marginRight: wp(2),
-    fontSize: hp(3),
+    fontSize: wp(4),
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 4,
@@ -184,31 +217,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonText: {
+  resetButtonText: {
     fontSize: wp(4),
-    color: '#1C208C',
+    color: COLORS.red,
+  },
+  searchTouchable: {
+    flex: 1,
+    marginLeft: wp(1),
+    width: '80%',
+    height: '100%',
+    justifyContent: 'center',
+  },
+  searchButton: {
+    alignSelf: 'center',
   },
 });
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    fontSize: hp(3),
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(1),
+    height: '100%',
+    fontSize: wp(4),
+    paddingLeft: wp(1),
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 4,
-    color: 'black',
+    color: COLORS.textColor,
     paddingRight: 30, // to ensure the text is never behind the icon
   },
   inputAndroid: {
-    fontSize: hp(3),
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(1),
+    fontSize: hp(2),
+    paddingLeft: wp(1),
+    height: '100%',
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 4,
-    color: 'black',
+    color: COLORS.textColor,
     paddingRight: 30, // to ensure the text is never behind the icon
   },
 });

@@ -1,10 +1,13 @@
-// const apiBaseUrl = 'http://192.168.0.109:3000';
-const apiBaseUrl = 'http://pba-jp-app.herokuapp.com'
+const apiBaseUrl = 'http://192.168.0.109:3000';
+// const apiBaseUrl = 'http://pba-jp-app.herokuapp.com'
 const apiGetTodayAll = '/api/today-all';
 const apiGetToday = '/api/today';
 const apiGetBatch = '/api/batch';
 const apiGetSearch = '/api/search';
 const apiGetSelect = '/api/select';
+const apiGetProfile = '/api/person';
+const apiGetSchedule = '/api/schedule';
+const apiGetPeople = '/api/people';
 
 const objGetKey = o => Object.keys(o);
 const objGetValue = o => Object.values(o);
@@ -20,13 +23,15 @@ export function getTodayAll() {
   return get(apiGetTodayAll);
 }
 
-export function getSearch(model, month, year, text) {
+export function getSearch(model, month, year, text, messenger, guest) {
   return get(
     apiGetSearch,
     {model: model},
     {month: month},
     {year: year},
     {text: text},
+    {messenger: messenger},
+    {guest: guest},
   );
 }
 
@@ -46,6 +51,64 @@ async function get(url, ...params) {
   console.log(fullUrl)
   try {
     const today = await fetch(fullUrl, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return await today.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getProfile(messenger, context, category) {
+  let url =
+    apiBaseUrl +
+    apiGetProfile +
+    '?messenger=' +
+    messenger +
+    '&context=' +
+    context +
+    '&category=' +
+    category;
+
+  try {
+    const today = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return await today.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getSchedule() {
+  let url = apiBaseUrl + apiGetSchedule;
+
+  try {
+    const today = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    return await today.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getPeople(context, category) {
+  let url = apiBaseUrl + apiGetPeople;
+  url = url + '?context=' + context + '&category=' + category;
+
+  console.log(url)
+  try {
+    const today = await fetch(url, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

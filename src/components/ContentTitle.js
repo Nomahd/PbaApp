@@ -4,13 +4,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import COLORS from '../constants/colors';
 
 const ContentTitle = props => (
   <View style={styles.view}>
-    <Text style={styles.title}>
+    <Text numberOfLines={1} style={styles.title}>
       {props.title}
     </Text>
-    <Text style={styles.date}>{props.broadcast_date}</Text>
   </View>
 );
 
@@ -19,13 +19,9 @@ const styles = StyleSheet.create({
     marginHorizontal: wp(2),
   },
   title: {
-    fontSize: wp(8),
-    color: '#1C208C',
-    marginVertical: hp(2),
-  },
-  date: {
-    fontSize: wp(5),
-    marginBottom: hp(1),
+    fontSize: wp(7),
+    color: COLORS.blue,
+    marginVertical: hp(1.5),
   },
 });
 export default ContentTitle;

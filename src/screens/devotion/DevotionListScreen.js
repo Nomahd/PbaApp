@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import {SafeAreaView} from 'react-navigation';
 import {StyleSheet} from 'react-native';
 import {CATEGORIES} from '../../constants/categories';
-import ContentParent from '../../components/ContentParent';
+import ListParent from '../../components/ListParent';
 
 export default class RadioListScreen extends Component {
   render() {
     return (
       <SafeAreaView style={styles.mainStyles}>
-        <ContentParent
+        <ListParent
           category={CATEGORIES.devotion}
           headerText="日々デボーション"
         />

@@ -8,6 +8,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import COLORS from '../../constants/colors';
 
 export default class ListScreen extends Component {
   _onPress() {
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     width: wp(75),
     height: hp(60),
     borderWidth: wp(0.5),
-    borderColor: '#1C208C',
+    borderColor: COLORS.blue,
     borderRadius: wp(3),
     justifyContent: 'center',
     alignItems: 'center',
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   donateText: {
-    color: '#FEBA00',
+    color: COLORS.orange,
     fontSize: wp(5),
     fontWeight: 'bold',
     marginBottom: hp(2),

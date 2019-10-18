@@ -3,6 +3,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import COLORS from '../constants/colors';
 
 const listScreenStyles = StyleSheet.create({
   scrollArea: {
@@ -17,7 +18,6 @@ const listScreenStyles = StyleSheet.create({
     marginTop: hp(2),
     width: wp(60),
     height: hp(15),
-    borderColor: '#1C208C',
     paddingVertical: hp(3),
     paddingHorizontal: wp(4),
     alignItems: 'center',
@@ -27,8 +27,9 @@ const listScreenStyles = StyleSheet.create({
     resizeMode: 'contain',
   },
   warningText: {
-    fontSize: wp(2),
+    fontSize: wp(2.5),
     marginTop: hp(0.5),
+    color: COLORS.textColor,
   },
 });
 

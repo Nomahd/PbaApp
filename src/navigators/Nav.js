@@ -23,6 +23,7 @@ import TelevisionListScreen from '../screens/television/TelevisionListScreen';
 import DevotionListScreen from '../screens/devotion/DevotionListScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Platform} from 'react-native';
+import COLORS from '../constants/colors';
 export const NAV = {
   Home: 'Home',
   Radio: 'Radio',
@@ -57,10 +58,10 @@ const OtherNavigator = createMaterialTopTabNavigator(
   {
     tabBarComponent: props => <SafeAreaMaterialTopTabBar {...props} />,
     tabBarOptions: {
-      activeTintColor: '#feba00',
-      indicatorStyle: {backgroundColor: '#FEBA00'},
+      activeTintColor: COLORS.orange,
+      indicatorStyle: {backgroundColor: COLORS.orange},
       style: {
-        backgroundColor: '#5584EE',
+        backgroundColor: COLORS.blue,
         height: hp(8),
         justifyContent: 'center',
       },
@@ -165,8 +166,8 @@ const BottomTabNav = createBottomTabNavigator(
   {
     tabBarOptions: {
       adaptive: false,
-      activeTintColor: '#FEBA00',
-      inactiveTintColor: '#1C208C',
+      activeTintColor: COLORS.orange,
+      inactiveTintColor: COLORS.babyBlue,
       style: {
         height: hp(7.5),
       },

@@ -19,6 +19,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {NAV} from '../navigators/Nav';
+import COLORS from '../constants/colors';
 
 class ContentList extends Component {
   _toContent = item => {
@@ -65,10 +66,10 @@ export default withNavigation(connect(mapStateToProps)(ContentList));
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: hp(2),
+    marginTop: hp(1.5),
     borderTopWidth: 1,
-    borderTopColor: '#737373',
-    marginBottom: hp(10),
+    borderTopColor: COLORS.grey,
+    flex: 1,
   },
   list: {
     width: wp(95),
@@ -81,11 +82,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#999999',
   },
   itemTextTitle: {
-    fontSize: hp(3),
+    fontSize: hp(2.5),
+    color: COLORS.textColor,
   },
   itemTextDate: {
     fontSize: hp(2),
-    color: '#1C208C',
+    color: COLORS.blue,
     marginBottom: hp(0.5),
   },
   activityIndicator: {

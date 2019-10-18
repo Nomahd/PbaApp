@@ -8,7 +8,7 @@ import {
 import React, {Component} from 'react';
 import {createAppContainer} from 'react-navigation';
 import {SplashNavigator} from '../navigators/Nav';
-import {getTodayAll} from '../api/api';
+import {getSchedule, getTodayAll} from '../api/api';
 
 const AppContainer = createAppContainer(SplashNavigator);
 
@@ -21,7 +21,8 @@ class AppWrapper extends Component {
   };
   handleDataGet = async () => {
     const data = await getTodayAll();
-    this.props.changeContentState(data);
+    const schedule = await getSchedule()
+    this.props.changeContentState(data, schedule);
   };
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);

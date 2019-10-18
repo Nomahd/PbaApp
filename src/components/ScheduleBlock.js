@@ -6,35 +6,53 @@ import {
 } from 'react-native-responsive-screen';
 
 const ScheduleBlock = props => {
-  let textReturn = [];
-  const _generateList = list => {
-    list.forEach((value, index) => {
-      if (value.date2 === null) {
-        textReturn.push(
-          <View key={index} style={styles.row}>
-            <Text style={styles.station}>{value.station}</Text>
-            <Text style={styles.date}>{value.date1}</Text>
-            <Text style={styles.time}>{value.time1}</Text>
-          </View>,
-        );
-      } else {
-        textReturn.push(
-          <View key={index} style={styles.row}>
-            <Text style={styles.station}>{value.station}</Text>
-            <Text style={styles.date}>{value.date1}</Text>
-            <Text style={styles.time}>{value.time1}</Text>
-          </View>,
-          <View key={index + 'x'} style={styles.rowExtra}>
-            <Text style={styles.station}>{null}</Text>
-            <Text style={styles.date}>{value.date2}</Text>
-            <Text style={styles.time}>{value.time2}</Text>
-          </View>,
-        );
-      }
-    });
-    return textReturn;
+  const _generateList = (row, index) => {
+    return (
+      <View key={index}>
+        <View style={styles.row}>
+          <Text style={styles.station}>{row.station}</Text>
+          <View style={styles.dateView}>
+            <Text style={styles.date}>({row.start_day})</Text>
+            {row.end_day ? (
+              <Text style={styles.date}>~</Text>
+            ) : (
+              <Text style={styles.date}>{''}</Text>
+            )}
+            {row.end_day ? (
+              <Text style={styles.date}>({row.end_day})</Text>
+            ) : (
+              <Text style={styles.date}>{''}</Text>
+            )}
+          </View>
+          <Text style={styles.time}>{row.time}</Text>
+        </View>
+        {row.extra_day_start ? (
+          <View style={styles.row}>
+            <Text style={styles.station}>{''}</Text>
+            <View style={styles.dateView}>
+              <Text style={styles.date}>({row.extra_day_start})</Text>
+              {row.extra_day_end ? (
+                <Text style={styles.date}>~</Text>
+              ) : (
+                <Text style={styles.date}>{''}</Text>
+              )}
+              {row.extra_day_end ? (
+                <Text style={styles.date}>({row.extra_day_end})</Text>
+              ) : (
+                <Text style={styles.date}>{''}</Text>
+              )}
+            </View>
+            <Text style={styles.time}>{row.extra_time}</Text>
+          </View>
+        ) : null}
+      </View>
+    );
   };
-  return <View style={[styles.box, props.colorStyle]}>{_generateList(props.list)}</View>;
+  return (
+    <View style={[styles.box, props.colorStyle]}>
+      {props.rows.map((row, index) => _generateList(row, index))}
+    </View>
+  );
 };
 
 export default ScheduleBlock;
@@ -49,22 +67,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
   },
   row: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     marginTop: hp(2),
   },
   rowExtra: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
   },
+  dateView: {
+    flexDirection: 'row',
+    flex: 2,
+  },
   station: {
+    flexWrap: 'nowrap',
     flex: 3,
     fontSize: wp(2.75),
     color: 'white',
     fontWeight: 'bold',
   },
   date: {
-    flex: 2,
+    textAlign: 'center',
+    flex: 1,
     fontSize: wp(2.75),
     color: 'white',
   },
@@ -72,5 +96,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: wp(2.75),
     color: 'white',
+    textAlign: 'right',
   },
 });

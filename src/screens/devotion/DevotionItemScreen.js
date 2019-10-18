@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import JAPANESE from '../../constants/japanese';
-import {SafeAreaView} from 'react-navigation';
 import {
   StyleSheet,
   Text,
@@ -8,15 +6,12 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import ContentList from '../../components/ContentList';
 import ContentTitle from '../../components/ContentTitle';
-import {WebView} from 'react-native-webview';
-import {URLS} from '../../constants/urls';
-import ContentBody from '../../components/ContentBody';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import COLORS from '../../constants/colors';
 
 export default class DevotionItemScreen extends Component {
   _isMounted = false;
@@ -40,19 +35,26 @@ export default class DevotionItemScreen extends Component {
   render() {
     return this.state.data != null ? (
       <ScrollView style={styles.container}>
-        <ContentTitle
-          title={this.state.data.title}
-          broadcast_date={this.state.data.broadcast_date}
-        />
-        <ContentBody
-          content={this.state.data.body}
-          bible_book={this.state.data.bible_book}
-          bible_chapter_verse={this.state.data.bible_chapter_verse}
-          messenger={this.state.data.messenger}
-        />
+        <ContentTitle title={this.state.data.title} />
+        <View style={styles.contentView}>
+          {this.state.data.messenger ? (
+            <Text style={styles.info}>{this.state.data.messenger}</Text>
+          ) : null}
+          {this.state.data.bible_book || this.state.data.bible_chapter_verse ? (
+            <Text style={styles.info}>
+              {this.state.data.bible_book ? this.state.data.bible_book : null}{' '}
+              {this.state.data.bible_chapter_verse
+                ? this.state.data.bible_chapter_verse
+                : null}
+            </Text>
+          ) : null}
+          <Text style={[styles.body, {fontSize: wp(this.props.fontSize)}]}>
+            {this.state.data.body}
+          </Text>
+        </View>
       </ScrollView>
     ) : (
-      <ActivityIndicator size="large" style={styles.activityIndicator}/>
+      <ActivityIndicator size="large" style={styles.activityIndicator} />
     );
   }
 }
@@ -63,5 +65,17 @@ const styles = StyleSheet.create({
   },
   activityIndicator: {
     marginTop: hp(5),
+  },
+  contentView: {
+    marginHorizontal: wp(2),
+  },
+  info: {
+    color: COLORS.textColor,
+    fontWeight: 'bold',
+    fontSize: wp(4),
+    marginBottom: hp(2),
+  },
+  body: {
+    color: COLORS.textColor,
   },
 });

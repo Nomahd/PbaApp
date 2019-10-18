@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
-import {getTodayAll} from '../api/api';
+import {getSchedule, getTodayAll} from '../api/api';
 import {NAV} from '../navigators/Nav';
 import {connect} from 'react-redux';
 import {changeContentState} from '../redux/actions/actions';
@@ -10,7 +10,8 @@ class SplashScreen extends Component {
   async componentDidMount() {
     let timeout = this.startTimeout();
     const data = await getTodayAll();
-    this.props.changeContentState(data);
+    const schedule = await getSchedule();
+    this.props.changeContentState(data, schedule);
     if (!this.timedOut) {
       clearTimeout(timeout);
       this.props.navigation.navigate(NAV.Home);

@@ -15,9 +15,10 @@ const initialState = {
     devotion: [],
     video: [],
   },
+  schedule: null,
 };
 
-const nullContent = {id: null, title: null, broadcast_date: null};
+const emptyContent = {id: '', title: '', broadcast_date: ''};
 
 export default function contentState(state = initialState, action) {
   switch (action.type) {
@@ -30,15 +31,16 @@ export default function contentState(state = initialState, action) {
       const videoList = action.batch.video;
       return {
         today: {
-          audio: audioToday !== null ? audioToday : nullContent,
-          devotion: devotionToday !== null ? devotionToday : nullContent,
-          video: videoToday !== null ? videoToday : nullContent,
+          audio: audioToday !== null ? audioToday : emptyContent,
+          devotion: devotionToday !== null ? devotionToday : emptyContent,
+          video: videoToday !== null ? videoToday : emptyContent,
         },
         batch: {
           audio: audioList !== null ? audioList : [],
           devotion: devotionList !== null ? devotionList : [],
           video: videoList !== null ? videoList : [],
         },
+        schedule: action.schedule,
       };
     case CHANGE_BATCH_STATE_TYPE:
       const data = action.data;

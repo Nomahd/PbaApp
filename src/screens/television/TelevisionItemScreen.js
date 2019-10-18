@@ -8,16 +8,16 @@ import {
   Text,
   View,
 } from 'react-native';
-import ContentList from '../../components/ContentList';
 import ContentTitle from '../../components/ContentTitle';
 import {WebView} from 'react-native-webview';
-import {URLS} from '../../constants/urls';
 import ContentBody from '../../components/ContentBody';
 import Orientation from 'react-native-orientation-locker';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {CATEGORIES} from '../../constants/categories';
+import COLORS from '../../constants/colors';
 
 export default class TelevisionItemScreen extends Component {
   _isMounted = false;
@@ -43,33 +43,57 @@ export default class TelevisionItemScreen extends Component {
   render() {
     return this.state.data != null ? (
       <ScrollView style={styles.container}>
-        <ContentTitle
-          title={this.state.data.title}
-          broadcast_date={this.state.data.broadcast_date}
-        />
+        <ContentTitle title={this.state.data.title} />
+        {this.state.data.guest ? (
+          <View style={styles.contentView}>
+            <Text style={styles.info}>{this.state.data.guest}</Text>
+          </View>
+        ) : null}
+
         <WebView
           style={styles.webView}
+          scrollEnabled={false}
+          bounces={false}
+          mediaPlaybackRequiresUserAction={false}
           originWhiteList={['*']}
+          allowsFullscreenVideo={true}
           source={{
             html: `
                 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-                  <div id="video"></div>
+                  <div id="video" style="text-align:center;"></div>
                   <script src="https://player.vimeo.com/api/player.js"></script>
-                  <script>var options = {
+                  <script>let options = {
                           url: "${this.state.data.link}",
-                          width: ${wp(90)}
+                          width: ${wp(95)},
+                          title: false,
+                          portrait: false,
+                          playsinline: false,
                         };
-                      var videoPlayer = new Vimeo.Player('video', options);</script>
+                      let videoPlayer = new Vimeo.Player('video', options);</script>
                 `,
           }}
         />
-        <ContentBody
-          content={this.state.data.description}
-          bible_book={this.state.data.bible_book}
-          bible_chapter_verse={this.state.data.bible_chapter_verse}
-          guest={this.state.data.guest}
-          messenger={this.state.data.messenger}
-        />
+        <View style={styles.contentView}>
+          {this.state.data.messenger ? (
+            <Text style={styles.info}>
+              メッセンジャー：{this.state.data.messenger}
+            </Text>
+          ) : null}
+          {this.state.data.bible_book || this.state.data.bible_chapter_verse ? (
+            <Text style={styles.info}>
+              {this.state.data.bible_book ? this.state.data.bible_book : null}{' '}
+              {this.state.data.bible_chapter_verse
+                ? this.state.data.bible_chapter_verse
+                : null}
+            </Text>
+          ) : null}
+          {this.state.data.description ? (
+            <Text
+              style={[styles.description, {fontSize: wp(this.props.fontSize)}]}>
+              {this.state.data.description}
+            </Text>
+          ) : null}
+        </View>
       </ScrollView>
     ) : (
       <View style={styles.activityIndicator}>
@@ -84,11 +108,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   webView: {
-    height: hp(40),
+    height: wp(55),
     width: wp(100),
   },
   activityIndicator: {
     flex: 1,
     marginTop: hp(10),
+  },
+  contentView: {
+    marginHorizontal: wp(2),
+  },
+  info: {
+    color: COLORS.textColor,
+    fontWeight: 'bold',
+    fontSize: wp(4),
+    marginBottom: hp(2),
+  },
+  description: {
+    color: COLORS.textColor,
   },
 });

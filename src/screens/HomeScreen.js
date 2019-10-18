@@ -7,7 +7,7 @@ import {
   Platform,
   StyleSheet,
   ActivityIndicator,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {mapStateToProps} from '../helpers/mapStateToProps';
@@ -21,17 +21,30 @@ import {
 } from 'react-native-responsive-screen';
 import {CATEGORIES} from '../constants/categories';
 import Orientation from 'react-native-orientation-locker';
+import {getBackground} from '../helpers/backgroundHelper';
+import COLORS from '../constants/colors';
 
 class HomeScreen extends Component {
   focusSub;
+  blurSub;
   state = {
     date: new Date(),
+    currentBackground: Math.floor(Math.random() * 4),
+    backgroundImageCount: 4,
   };
   componentDidMount() {
     Orientation.lockToPortrait();
     this.focusSub = this.props.navigation.addListener('didFocus', () => {
       const newDate = new Date();
       this.setState({date: newDate});
+    });
+    this.blurSub = this.props.navigation.addListener('willBlur', () => {
+      let nextBackground = this.state.currentBackground + 1;
+      if (nextBackground < this.state.backgroundImageCount) {
+        this.setState({currentBackground: nextBackground});
+      } else {
+        this.setState({currentBackground: 0});
+      }
     });
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
@@ -40,12 +53,13 @@ class HomeScreen extends Component {
     return false;
   };
   componentWillUnmount() {
+    this.blurSub.remove();
     this.focusSub.remove();
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
   }
 
   _openTodayTelevision = () => {
-    if (this.props.contentState.today.video.id != null) {
+    if (this.props.contentState.today.video.id) {
       this.props.navigation.navigate(NAV.Content, {
         category: CATEGORIES.television,
         id: this.props.contentState.today.video.id,
@@ -54,7 +68,7 @@ class HomeScreen extends Component {
   };
 
   _openTodayDevotion = () => {
-    if (this.props.contentState.today.devotion.id != null) {
+    if (this.props.contentState.today.devotion.id) {
       this.props.navigation.navigate(NAV.Content, {
         category: CATEGORIES.devotion,
         id: this.props.contentState.today.devotion.id,
@@ -63,7 +77,7 @@ class HomeScreen extends Component {
   };
 
   _openTodayRadio = () => {
-    if (this.props.contentState.today.audio.id != null) {
+    if (this.props.contentState.today.audio.id) {
       this.props.navigation.navigate(NAV.Content, {
         category: CATEGORIES.radio,
         id: this.props.contentState.today.audio.id,
@@ -75,94 +89,97 @@ class HomeScreen extends Component {
     const videoTitle = this.props.contentState.today.video.title;
     const audioTitle = this.props.contentState.today.audio.title;
     const devotionTitle = this.props.contentState.today.devotion.title;
+    let backgroundImage = getBackground(
+      this.state.currentBackground,
+      this.state.backgroundImageCount,
+    );
     return (
-      <SafeAreaView
-        style={
-          Platform.OS === 'ios'
-            ? styles.iosViewStyles
-            : styles.androidViewStyles
-        }>
-        <View style={styles.dateViewStyles}>
-          <Text style={styles.dateStyles}>
-            {DATES[this.state.date.getDay()]} {this.state.date.getMonth()}月
-            {this.state.date.getDate()}日
-          </Text>
-          <Text style={styles.todayStyles}>今日のメディア</Text>
-        </View>
+      <SafeAreaView style={styles.mainView}>
         <TouchableOpacity
-          style={styles.touchableImage}
+          style={styles.videoImageTouchable}
           onPress={this._openTodayTelevision.bind(this)}>
           <ImageBackground
-            style={styles.imageBackgroundStyles}
-            imageStyle={{borderRadius: wp(3)}}
-            source={require('../../res/img/main-bg-2.jpg')}>
-            <View style={styles.imageOverlayStyles}>
-              <Text style={styles.imageOverlayTextStyles}>今日のテレビ</Text>
-              <Text style={styles.imageOverlayTitleStyles} numberOfLines={1}>
-                {videoTitle !== null ? (
-                  videoTitle
-                ) : (
-                  <ActivityIndicator
-                    size="large"
-                    style={styles.activityIndicator}
-                  />
-                )}
+            style={styles.videoImageBackground}
+            source={backgroundImage}
+            imageStyle={styles.videoImage}>
+            <View style={styles.videoImageOverlay}>
+              <Text style={styles.videoImageOverlayHeader}>
+                今週の「ライフ・ライン」
               </Text>
+              {videoTitle !== null ? (
+                <Text
+                  style={[styles.videoImageOverlayTitle, {fontWeight: 'bold'}]}
+                  numberOfLines={2}>
+                  {videoTitle}
+                </Text>
+              ) : (
+                <ActivityIndicator
+                  size="large"
+                  style={styles.activityIndicatorTop}
+                />
+              )}
             </View>
           </ImageBackground>
         </TouchableOpacity>
-        <View style={styles.bottomViewStyles}>
+        <View style={styles.subView}>
           <TouchableOpacity
-            style={styles.bottomContentStyles}
+            style={styles.bottomContentTouchables}
             onPress={this._openTodayDevotion.bind(this)}>
-            <Icon
-              name={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
-              size={hp(8)}
-              color={'white'}
-              style={styles.bottomIconStyles}
-            />
-            <View style={styles.bottomContentInsideViewStyles}>
-              <Text style={styles.bottomContentTextStyles}>
-                日々デボーション
+            <View style={styles.bottomIconWrapper}>
+              <Icon
+                name={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
+                size={hp(8)}
+                color={'white'}
+                style={styles.bottomIcons}
+              />
+            </View>
+            <View style={styles.bottomTextViews}>
+              <Text style={styles.bottomHeaders}>
+                {this.state.date.getMonth()}月{this.state.date.getDate()}日 (
+                {DATES[this.state.date.getDay()]}) 日デボーション
               </Text>
-              <Text
-                style={[styles.bottomContentTitleStyles, {fontWeight: 'bold'}]}
-                numberOfLines={1}>
-                {devotionTitle !== null ? (
-                  devotionTitle
-                ) : (
-                  <ActivityIndicator
-                    size="large"
-                    style={styles.activityIndicator}
-                  />
-                )}
-              </Text>
+              {devotionTitle !== null ? (
+                <Text
+                  style={[
+                    styles.bottomTitles,
+                    {fontWeight: 'bold'},
+                  ]}
+                  numberOfLines={1}>
+                  {devotionTitle}
+                </Text>
+              ) : (
+                <ActivityIndicator
+                  size="large"
+                  style={styles.activityIndicator}
+                />
+              )}
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.bottomContentStyles, {backgroundColor: '#FF9000'}]}
+            style={styles.bottomContentTouchables}
             onPress={this._openTodayRadio.bind(this)}>
-            <Icon
-              name={Platform.OS === 'ios' ? 'ios-headset' : 'md-headset'}
-              size={hp(8)}
-              color={'white'}
-              style={styles.bottomIconStyles}
-            />
-
-            <View style={styles.bottomContentInsideViewStyles}>
-              <Text style={styles.bottomContentTextStyles}>今日のラジオ</Text>
-              <Text
-                style={[styles.bottomContentTitleStyles, {fontWeight: 'bold'}]}
-                numberOfLines={1}>
-                {audioTitle !== null ? (
-                  audioTitle
-                ) : (
-                  <ActivityIndicator
-                    size="large"
-                    style={styles.activityIndicator}
-                  />
-                )}
-              </Text>
+            <View style={styles.bottomIconWrapper}>
+              <Icon
+                name={Platform.OS === 'ios' ? 'ios-headset' : 'md-headset'}
+                size={hp(8)}
+                color={'white'}
+                style={styles.bottomIcons}
+              />
+            </View>
+            <View style={styles.bottomTextViews}>
+              <Text style={styles.bottomHeaders}>今日のラジオ</Text>
+              {audioTitle !== null ? (
+                <Text
+                  style={[styles.bottomTitles, {fontWeight: 'bold'}]}
+                  numberOfLines={1}>
+                  {audioTitle}
+                </Text>
+              ) : (
+                <ActivityIndicator
+                  size="large"
+                  style={styles.activityIndicator}
+                />
+              )}
             </View>
           </TouchableOpacity>
         </View>
@@ -174,94 +191,83 @@ class HomeScreen extends Component {
 export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
-  iosViewStyles: {
+  mainView: {
     flex: 1,
-    marginTop: hp(5),
     alignSelf: 'center',
-    width: wp(90),
+    width: '100%',
   },
-  androidViewStyles: {
-    flex: 1,
-    marginTop: hp(2),
-    alignSelf: 'center',
-    width: wp(90),
-  },
-  touchableImage: {
-    height: hp(40),
-    marginBottom: hp(3),
-  },
-  imageBackgroundStyles: {
-    height: hp(40),
+  videoImageTouchable: {
+    height: hp(65),
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.50)',
-    borderRadius: wp(3),
-    marginBottom: hp(3),
   },
-  dateViewStyles: {
-    marginBottom: hp(1),
+  videoImageBackground: {
+    height: '100%',
+    backgroundColor: 'grey',
+    justifyContent: 'flex-end',
   },
-  dateStyles: {
-    fontSize: hp(2.5),
-    marginBottom: hp(0.5),
-    color: 'grey',
+  videoImage: {
+    resizeMode: 'stretch',
+    alignSelf: 'flex-start',
   },
-  todayStyles: {
-    fontSize: hp(6),
-    fontWeight: 'bold',
-  },
-  imageOverlayStyles: {
+  videoImageOverlay: {
     height: '30%',
     width: '100%',
-    marginBottom: hp(3),
-    alignSelf: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.50)',
+    backgroundColor: COLORS.transparentBlack,
   },
-  imageOverlayTextStyles: {
+  videoImageOverlayHeader: {
     color: 'white',
-    fontSize: wp(4),
+    fontSize: wp(6),
     alignSelf: 'center',
   },
-  imageOverlayTitleStyles: {
+  videoImageOverlayTitle: {
     marginTop: hp(2),
     color: 'white',
     fontWeight: 'bold',
     fontSize: wp(6),
     alignSelf: 'center',
-    marginLeft: wp(2),
-    marginRight: wp(2),
+    marginHorizontal: wp(2),
   },
-  bottomViewStyles: {
+  subView: {
     flex: 1,
   },
-  bottomContentStyles: {
+  bottomContentTouchables: {
     flex: 1,
     flexDirection: 'row',
-    marginBottom: hp(3),
-    borderRadius: wp(3),
-    backgroundColor: '#1C208C',
   },
-  bottomIconStyles: {
+  bottomIconWrapper: {
     marginLeft: wp(5),
     alignSelf: 'center',
+    justifyContent: 'center',
+    height: '80%',
+    aspectRatio: 1,
+    borderRadius: hp(1),
+    backgroundColor: COLORS.babyBlue,
   },
-  bottomContentTextStyles: {
-    color: 'white',
-    fontSize: wp(4),
+  bottomIcons: {
+    alignSelf: 'center',
   },
-  bottomContentInsideViewStyles: {
+  bottomTextViews: {
     flex: 1,
-    marginTop: hp(3),
+    marginTop: hp(1),
     marginLeft: wp(5),
     flexDirection: 'column',
   },
-  bottomContentTitleStyles: {
+  bottomHeaders: {
+    fontSize: wp(4),
+    color: COLORS.textColor,
+  },
+  bottomTitles: {
     marginRight: wp(2),
-    color: 'white',
     fontWeight: 'bold',
     fontSize: wp(5),
+    marginTop: hp(1),
+    color: COLORS.textColor,
   },
   activityIndicator: {
-    marginTop: 10,
+    alignSelf: 'flex-start',
+  },
+  activityIndicatorTop: {
+    alignSelf: 'center',
   },
 });
