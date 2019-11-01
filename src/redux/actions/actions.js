@@ -10,7 +10,7 @@ export const changeAppState = appState => ({
   appState,
 });
 
-export const changeContentState = (data, schedule) => ({
+export const changeContentState = (data, schedule, people) => ({
   type: CHANGE_CONTENT_STATE_TYPE,
   today: {
     audio: data.today.audio,
@@ -23,6 +23,7 @@ export const changeContentState = (data, schedule) => ({
     video: data.batch.video,
   },
   schedule: schedule,
+  people: people,
 });
 
 export const changeBatchState = (data, category) => ({

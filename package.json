@@ -1,5 +1,5 @@
 {
-  "name": "PbaApp",
+  "name": "pba-app",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",
+    "jetifier": "^1.6.4",
     "react": "16.8.6",
     "react-devtools-core": "^3.6.3",
     "react-native": "0.60.5",

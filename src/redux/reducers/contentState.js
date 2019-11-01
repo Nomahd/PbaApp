@@ -15,7 +15,8 @@ const initialState = {
     devotion: [],
     video: [],
   },
-  schedule: null,
+  schedule: [],
+  people: [],
 };
 
 const emptyContent = {id: '', title: '', broadcast_date: ''};
@@ -41,6 +42,7 @@ export default function contentState(state = initialState, action) {
           video: videoList !== null ? videoList : [],
         },
         schedule: action.schedule,
+        people: action.people,
       };
     case CHANGE_BATCH_STATE_TYPE:
       const data = action.data;

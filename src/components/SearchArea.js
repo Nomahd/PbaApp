@@ -18,6 +18,8 @@ import {getBatch, getSearch} from '../api/api';
 import getModel from '../constants/models';
 import Icon from 'react-native-vector-icons/Ionicons';
 import COLORS from '../constants/colors';
+import {getContext} from '../constants/categories';
+import {mapStateToProps} from '../helpers/mapStateToProps';
 
 class SearchArea extends Component {
   state = {
@@ -70,7 +72,7 @@ class SearchArea extends Component {
         this.state.searchYear,
         this.state.searchText,
         this.state.searchMessenger,
-        this.state.searchGuest
+        this.state.searchGuest,
       );
       this.props.setLoading(false);
       this.props.changeBatchState(data, this.props.category);
@@ -133,42 +135,64 @@ class SearchArea extends Component {
           </View>
         </View>
 
-        <View style={styles.rowContainer}>
-          {this.props.messengers.length === 0 ? null : (
-            <View style={styles.leftPicker}>
-              <RNPickerSelect
-                style={pickerSelectStyles}
-                onValueChange={value => {
-                  this.setState({searchMessenger: value});
-                }}
-                placeholder={{label: 'メッセンジャー', value: null}}
-                items={this.props.messengers}
-                useNativeAndroidPickerStyle={false}
-              />
-            </View>
-          )}
+        {this.props.contentState.people.length ? (
+          <View style={styles.rowContainer}>
+            {this.props.contentState.people.filter(
+              value =>
+                value.context === getContext(this.props.category) &&
+                value.category === 'messenger',
+            ).length ? (
+              <View style={styles.leftPicker}>
+                <RNPickerSelect
+                  style={pickerSelectStyles}
+                  onValueChange={value => {
+                    this.setState({searchMessenger: value});
+                  }}
+                  placeholder={{label: 'メッセンジャー', value: null}}
+                  items={this.props.contentState.people
+                    .filter(
+                      value =>
+                        value.context === getContext(this.props.category) &&
+                        value.category === 'messenger',
+                    )
+                    .map(person => ({label: person.name, value: person.name}))}
+                  useNativeAndroidPickerStyle={false}
+                />
+              </View>
+            ) : null}
 
-          {this.props.guests.length === 0 ? null : (
-            <View style={styles.rightPicker}>
-              <RNPickerSelect
-                style={pickerSelectStyles}
-                onValueChange={value => {
-                  this.setState({searchGuest: value});
-                }}
-                placeholder={{label: 'ゲスト', value: null}}
-                items={this.props.guests}
-                useNativeAndroidPickerStyle={false}
-              />
-            </View>
-          )}
-        </View>
+            {this.props.contentState.people.filter(
+              value =>
+                value.context === getContext(this.props.category) &&
+                value.category === 'guest',
+            ).length ? (
+              <View style={styles.rightPicker}>
+                <RNPickerSelect
+                  style={pickerSelectStyles}
+                  onValueChange={value => {
+                    this.setState({searchGuest: value});
+                  }}
+                  placeholder={{label: 'ゲスト', value: null}}
+                  items={this.props.contentState.people
+                    .filter(
+                      value =>
+                        value.context === getContext(this.props.category) &&
+                        value.category === 'guest',
+                    )
+                    .map(person => ({label: person.name, value: person.name}))}
+                  useNativeAndroidPickerStyle={false}
+                />
+              </View>
+            ) : null}
+          </View>
+        ) : null}
       </View>
     );
   }
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   {changeBatchState},
 )(SearchArea);
 

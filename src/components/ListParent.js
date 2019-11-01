@@ -4,8 +4,6 @@ import {StyleSheet} from 'react-native';
 import ContentList from './ContentList';
 import ListScreenHeader from './ListScreenHeader';
 import SearchArea from './SearchArea';
-import {getPeople} from '../api/api';
-import {getContext} from '../constants/categories';
 
 export default class ListParent extends Component {
   state = {
@@ -14,21 +12,6 @@ export default class ListParent extends Component {
     messengers: [],
     guests: [],
   };
-
-  componentDidMount() {
-    this._getPeople();
-  }
-
-  _getPeople() {
-    getPeople(getContext(this.props.category), 'messenger').then(data => {
-      console.log(data);
-      this.setState({messengers: data});
-    });
-    getPeople(getContext(this.props.category), 'guest').then(data => {
-      console.log(data);
-      this.setState({guests: data});
-    });
-  }
 
   _toggleSearch() {
     this.setState({search: !this.state.search});
@@ -57,14 +40,6 @@ export default class ListParent extends Component {
             category={this.props.category}
             resetSearch={this._resetSearch.bind(this)}
             setLoading={this._loading.bind(this)}
-            messengers={this.state.messengers.map(x => ({
-              label: x.name,
-              value: x.name,
-            }))}
-            guests={this.state.guests.map(x => ({
-              label: x.name,
-              value: x.name,
-            }))}
           />
         ) : null}
         <ContentList

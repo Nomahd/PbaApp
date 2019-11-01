@@ -1,5 +1,5 @@
-const apiBaseUrl = 'http://192.168.0.109:3000';
-// const apiBaseUrl = 'http://pba-jp-app.herokuapp.com'
+// const apiBaseUrl = 'http://192.168.0.109:3000';
+const apiBaseUrl = 'http://pba-jp-app.herokuapp.com';
 const apiGetTodayAll = '/api/today-all';
 const apiGetToday = '/api/today';
 const apiGetBatch = '/api/batch';
@@ -48,7 +48,7 @@ async function get(url, ...params) {
     }
     fullUrl += objGetKey(obj) + '=' + objGetValue(obj);
   });
-  console.log(fullUrl)
+
   try {
     const today = await fetch(fullUrl, {
       method: 'GET',
@@ -102,11 +102,9 @@ export async function getSchedule() {
   }
 }
 
-export async function getPeople(context, category) {
+export async function getPeople() {
   let url = apiBaseUrl + apiGetPeople;
-  url = url + '?context=' + context + '&category=' + category;
 
-  console.log(url)
   try {
     const today = await fetch(url, {
       method: 'GET',
