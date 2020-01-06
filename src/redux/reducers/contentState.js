@@ -45,20 +45,32 @@ export default function contentState(state = initialState, action) {
         people: action.people,
       };
     case CHANGE_BATCH_STATE_TYPE:
-      const data = action.data;
-      const newState = state;
       switch (action.category) {
         case CATEGORIES.television:
-          newState.batch.video = data;
-          break;
+          return {
+            ...state,
+            batch: {
+              ...state.batch,
+              video: action.data,
+            },
+          };
         case CATEGORIES.devotion:
-          newState.batch.devotion = data;
-          break;
+          return {
+            ...state,
+            batch: {
+              ...state.batch,
+              devotion: action.data,
+            },
+          };
         case CATEGORIES.radio:
-          newState.batch.audio = data;
-          break;
+          return {
+            ...state,
+            batch: {
+              ...state.batch,
+              audio: action.data,
+            },
+          };
       }
-      return newState;
     default:
       return state;
   }

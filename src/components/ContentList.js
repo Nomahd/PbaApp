@@ -14,10 +14,7 @@ import {connect} from 'react-redux';
 import {mapStateToProps} from '../helpers/mapStateToProps';
 import {withNavigation} from 'react-navigation';
 import {CATEGORIES} from '../constants/categories';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../utils/dimensions';
 import {NAV} from '../navigators/Nav';
 import COLORS from '../constants/colors';
 
@@ -29,6 +26,37 @@ class ContentList extends Component {
     });
   };
   render() {
+    const styles = StyleSheet.create({
+      container: {
+        marginTop: hp(1.5),
+        borderTopWidth: 1,
+        borderTopColor: COLORS.grey,
+        flex: 1,
+      },
+      list: {
+        width: wp(95),
+        alignSelf: 'flex-end',
+      },
+      itemView: {
+        width: wp(90),
+        marginTop: hp(1),
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#999999',
+      },
+      itemTextTitle: {
+        fontSize: hp(2.5),
+        color: COLORS.textColor,
+      },
+      itemTextDate: {
+        fontSize: hp(2),
+        color: COLORS.blue,
+        marginBottom: hp(0.5),
+      },
+      activityIndicator: {
+        marginTop: hp(5),
+      },
+    });
+
     let data = null;
     if (this.props.category === CATEGORIES.radio) {
       data = this.props.contentState.batch.audio;
@@ -63,34 +91,3 @@ class ContentList extends Component {
   }
 }
 export default withNavigation(connect(mapStateToProps)(ContentList));
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: hp(1.5),
-    borderTopWidth: 1,
-    borderTopColor: COLORS.grey,
-    flex: 1,
-  },
-  list: {
-    width: wp(95),
-    alignSelf: 'flex-end',
-  },
-  itemView: {
-    width: wp(90),
-    marginTop: hp(1),
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#999999',
-  },
-  itemTextTitle: {
-    fontSize: hp(2.5),
-    color: COLORS.textColor,
-  },
-  itemTextDate: {
-    fontSize: hp(2),
-    color: COLORS.blue,
-    marginBottom: hp(0.5),
-  },
-  activityIndicator: {
-    marginTop: hp(5),
-  },
-});

@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import JAPANESE from '../../constants/japanese';
-import {SafeAreaView} from 'react-navigation';
 import {
-  ActivityIndicator,
+  ActivityIndicator, Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,10 +10,7 @@ import ContentTitle from '../../components/ContentTitle';
 import {WebView} from 'react-native-webview';
 import ContentBody from '../../components/ContentBody';
 import Orientation from 'react-native-orientation-locker';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp, setDimensions} from '../../utils/dimensions';
 import {CATEGORIES} from '../../constants/categories';
 import COLORS from '../../constants/colors';
 
@@ -41,6 +36,35 @@ export default class TelevisionItemScreen extends Component {
   }
 
   render() {
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      activityIndicator: {
+        flex: 1,
+        marginTop: hp(10),
+      },
+      contentView: {
+        marginHorizontal: wp(2),
+        marginVertical: hp(2),
+      },
+      info: {
+        color: COLORS.textColor,
+        fontWeight: 'bold',
+        fontSize: wp(4),
+        marginBottom: hp(2),
+      },
+      description: {
+        color: COLORS.textColor,
+      },
+      webview: {
+        width: wp(95),
+        height: wp(55),
+      },
+      webviewContainer: {
+        alignItems: 'center',
+      },
+    });
     return this.state.data != null ? (
       <ScrollView style={styles.container}>
         <ContentTitle title={this.state.data.title} />
@@ -50,29 +74,33 @@ export default class TelevisionItemScreen extends Component {
           </View>
         ) : null}
 
-        <WebView
-          style={styles.webView}
-          scrollEnabled={false}
-          bounces={false}
-          mediaPlaybackRequiresUserAction={false}
-          originWhiteList={['*']}
-          allowsFullscreenVideo={true}
-          source={{
-            html: `
+        <View style={styles.webviewContainer}>
+          <WebView
+            style={styles.webview}
+            scrollEnabled={false}
+            bounces={false}
+            mediaPlaybackRequiresUserAction={false}
+            originWhiteList={['*']}
+            allowsFullscreenVideo={true}
+            source={{
+              html: `
                 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-                  <div id="video" style="text-align:center;"></div>
+               <div id="video"></div>
                   <script src="https://player.vimeo.com/api/player.js"></script>
-                  <script>let options = {
+                  <script>
+                  var iframe = document.querySelector('#video');
+                  let options = {
                           url: "${this.state.data.link}",
                           width: ${wp(95)},
+                          byline: false,
                           title: false,
                           portrait: false,
-                          playsinline: false,
                         };
-                      let videoPlayer = new Vimeo.Player('video', options);</script>
+                      let videoPlayer = new Vimeo.Player(iframe, options);</script>
                 `,
-          }}
-        />
+            }}
+          />
+        </View>
         <View style={styles.contentView}>
           {this.state.data.messenger ? (
             <Text style={styles.info}>
@@ -102,29 +130,3 @@ export default class TelevisionItemScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  webView: {
-    height: wp(55),
-    width: wp(100),
-  },
-  activityIndicator: {
-    flex: 1,
-    marginTop: hp(10),
-  },
-  contentView: {
-    marginHorizontal: wp(2),
-  },
-  info: {
-    color: COLORS.textColor,
-    fontWeight: 'bold',
-    fontSize: wp(4),
-    marginBottom: hp(2),
-  },
-  description: {
-    color: COLORS.textColor,
-  },
-});

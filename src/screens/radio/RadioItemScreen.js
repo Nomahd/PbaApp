@@ -12,10 +12,7 @@ import ContentTitle from '../../components/ContentTitle';
 import {WebView} from 'react-native-webview';
 import {URLS} from '../../constants/urls';
 import ContentBody from '../../components/ContentBody';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../../utils/dimensions';
 import {getProfile} from '../../api/api';
 import COLORS from '../../constants/colors';
 
@@ -50,6 +47,52 @@ export default class RadioItemScreen extends Component {
   }
 
   render() {
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      webView: {
+        width: wp(95),
+        height: hp(10),
+        alignSelf: 'center',
+      },
+      activityIndicator: {
+        marginTop: hp(5),
+      },
+      contentView: {
+        marginHorizontal: wp(2),
+      },
+      messengerView: {
+        flexDirection: 'row',
+      },
+      profilePicture: {
+        flex: 1.5,
+        height: hp(40),
+        marginRight: wp(2),
+      },
+      messengerInfoView: {
+        flex: 2,
+        marginLeft: wp(1),
+      },
+      messengerName: {
+        color: COLORS.textColor,
+        fontSize: wp(4),
+        fontWeight: 'bold',
+      },
+      messengerProfile: {
+        color: COLORS.textColor,
+      },
+      info: {
+        color: COLORS.textColor,
+        fontWeight: 'bold',
+        fontSize: wp(4),
+        marginBottom: hp(2),
+      },
+      description: {
+        color: COLORS.textColor,
+        marginBottom: hp(2),
+      },
+    });
     return this.state.data != null ? (
       <ScrollView style={styles.container}>
         <ContentTitle title={this.state.data.title} />
@@ -116,49 +159,3 @@ export default class RadioItemScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  webView: {
-    width: wp(95),
-    height: hp(10),
-    alignSelf: 'center',
-  },
-  activityIndicator: {
-    marginTop: hp(5),
-  },
-  contentView: {
-    marginHorizontal: wp(2),
-  },
-  messengerView: {
-    flexDirection: 'row',
-  },
-  profilePicture: {
-    flex: 1,
-    height: hp(30),
-  },
-  messengerInfoView: {
-    flex: 2,
-    marginLeft: wp(1),
-  },
-  messengerName: {
-    color: COLORS.textColor,
-    fontSize: wp(4),
-    fontWeight: 'bold',
-  },
-  messengerProfile: {
-    color: COLORS.textColor,
-  },
-  info: {
-    color: COLORS.textColor,
-    fontWeight: 'bold',
-    fontSize: wp(4),
-    marginBottom: hp(2),
-  },
-  description: {
-    color: COLORS.textColor,
-    marginBottom: hp(2),
-  },
-});

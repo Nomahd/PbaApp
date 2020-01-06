@@ -1,11 +1,50 @@
 import React from 'react';
 import {Image, StyleSheet, ScrollView, View, Text} from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../utils/dimensions';
 
 const ScheduleBlock = props => {
+  const styles = StyleSheet.create({
+    box: {
+      marginTop: hp(2),
+      width: wp(80),
+      flex: 1,
+      borderRadius: wp(3),
+      paddingVertical: hp(1),
+      paddingHorizontal: wp(2),
+    },
+    row: {
+      flex: 2,
+      flexDirection: 'row',
+      marginTop: hp(2),
+    },
+    rowExtra: {
+      flex: 2,
+      flexDirection: 'row',
+    },
+    dateView: {
+      flexDirection: 'row',
+      flex: 2,
+    },
+    station: {
+      flexWrap: 'nowrap',
+      flex: 3,
+      fontSize: wp(2.75),
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    date: {
+      textAlign: 'center',
+      flex: 1,
+      fontSize: wp(2.75),
+      color: 'white',
+    },
+    time: {
+      flex: 1,
+      fontSize: wp(2.75),
+      color: 'white',
+      textAlign: 'right',
+    },
+  });
   const _generateList = (row, index) => {
     return (
       <View key={index}>
@@ -56,46 +95,3 @@ const ScheduleBlock = props => {
 };
 
 export default ScheduleBlock;
-
-const styles = StyleSheet.create({
-  box: {
-    marginTop: hp(2),
-    width: wp(80),
-    flex: 1,
-    borderRadius: wp(3),
-    paddingVertical: hp(1),
-    paddingHorizontal: wp(2),
-  },
-  row: {
-    flex: 2,
-    flexDirection: 'row',
-    marginTop: hp(2),
-  },
-  rowExtra: {
-    flex: 2,
-    flexDirection: 'row',
-  },
-  dateView: {
-    flexDirection: 'row',
-    flex: 2,
-  },
-  station: {
-    flexWrap: 'nowrap',
-    flex: 3,
-    fontSize: wp(2.75),
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  date: {
-    textAlign: 'center',
-    flex: 1,
-    fontSize: wp(2.75),
-    color: 'white',
-  },
-  time: {
-    flex: 1,
-    fontSize: wp(2.75),
-    color: 'white',
-    textAlign: 'right',
-  },
-});

@@ -24,6 +24,12 @@ export default class ListParent extends Component {
   }
 
   render() {
+    const styles = StyleSheet.create({
+      mainStyles: {
+        flex: 1,
+      },
+    });
+
     return (
       <SafeAreaView style={styles.mainStyles}>
         {this.state.search ? null : (
@@ -50,9 +56,3 @@ export default class ListParent extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  mainStyles: {
-    flex: 1,
-  },
-});

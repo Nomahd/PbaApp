@@ -13,10 +13,7 @@ import RadioItemScreen from './radio/RadioItemScreen';
 import DevotionItemScreen from './devotion/DevotionItemScreen';
 import TelevisionItemScreen from './television/TelevisionItemScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp, getHeightInset} from '../utils/dimensions';
 import {getSelect} from '../api/api';
 import getModel from '../constants/models';
 import COLORS from '../constants/colors';
@@ -36,23 +33,23 @@ export default class ContentScreen extends Component {
     try {
       const fontSize = await AsyncStorage.getItem('@fontSize_key');
       if (fontSize !== null) {
-        this.setState({fontSize: fontSize});
+        this.setState({fontSize: parseInt(fontSize)});
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
   _storeFontSize = async size => {
     try {
-      await AsyncStorage.setItem('@fontSize_key', size);
+      await AsyncStorage.setItem('@fontSize_key', size.toString());
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
   _increaseFont = () => {
-    if (this.state.fontSize < 6) {
+    if (this.state.fontSize < 7) {
       let newFont = this.state.fontSize + 1;
       this.setState({fontSize: newFont});
       this._storeFontSize(newFont);
@@ -106,29 +103,6 @@ export default class ContentScreen extends Component {
     }
   };
 
-  _renderHeader = category => {
-    switch (category) {
-      case CATEGORIES.radio:
-        return (
-          <Image
-            style={styles.headerImage}
-            source={require('../../res/img/logo_YNH.png')}
-            resizeMode="contain"
-          />
-        );
-      case CATEGORIES.television:
-        return (
-          <Image
-            style={styles.headerImage}
-            source={require('../../res/img/logo_LL.png')}
-            resizeMode="contain"
-          />
-        );
-      case CATEGORIES.devotion:
-        return <Text style={styles.headerText}>日々デボーション</Text>;
-    }
-  };
-
   _goBack = () => {
     this.props.navigation.goBack();
   };
@@ -137,9 +111,103 @@ export default class ContentScreen extends Component {
     this.setState({fontBar: !this.state.fontBar});
   };
   render() {
+    const _renderHeader = category => {
+      switch (category) {
+        case CATEGORIES.radio:
+          return (
+            <Image
+              style={styles.headerImage}
+              source={require('../../res/img/logo_YNH.png')}
+              resizeMode="contain"
+            />
+          );
+        case CATEGORIES.television:
+          return (
+            <Image
+              style={styles.headerImage}
+              source={require('../../res/img/logo_LL.png')}
+              resizeMode="contain"
+            />
+          );
+        case CATEGORIES.devotion:
+          return <Text style={styles.headerText}>今週のデボーション</Text>;
+      }
+    };
+
+    const styles = StyleSheet.create({
+      area: {
+        flex: 1,
+      },
+      header: {
+        height: hp(8),
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.babyBlue,
+      },
+      backButton: {
+        zIndex: 1,
+        alignSelf: 'center',
+        paddingHorizontal: wp(3),
+      },
+      content: {
+        flex: 1,
+      },
+      headerText: {
+        color: 'white',
+        fontSize: wp(5),
+        fontWeight: 'bold',
+        marginRight: wp(6),
+      },
+      headerImageTextView: {
+        flex: 1,
+        alignItems: 'center',
+        marginVertical: hp(1),
+      },
+      headerImage: {
+        height: '100%',
+        tintColor: 'white',
+        marginRight: wp(6),
+      },
+      fontBar: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: hp(8),
+        width: '100%',
+        backgroundColor: COLORS.blue,
+      },
+      fontButton: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        paddingHorizontal: wp(3),
+        paddingVertical: hp(2),
+      },
+      fontSmall: {
+        fontSize: wp(3.5),
+        color: 'white',
+      },
+      fontBig: {
+        fontSize: wp(5),
+        color: 'white',
+      },
+      fontDefault: {
+        fontSize: wp(3),
+        color: 'white',
+      },
+      fontBarButton: {
+        marginHorizontal: wp(6),
+        width: hp(5),
+        height: hp(5),
+        borderWidth: wp(0.5),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: hp(1),
+        borderColor: 'white',
+      },
+    });
     return (
-      <SafeAreaView style={styles.area}>
-        <View style={styles.header}>
+      <View style={styles.area}>
+        <SafeAreaView style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={this._goBack.bind(this)}>
@@ -154,7 +222,7 @@ export default class ContentScreen extends Component {
             />
           </TouchableOpacity>
           <View style={styles.headerImageTextView}>
-            {this._renderHeader(this.props.navigation.getParam('category'))}
+            {_renderHeader(this.props.navigation.getParam('category'))}
           </View>
           <TouchableOpacity
             style={styles.fontButton}
@@ -162,7 +230,7 @@ export default class ContentScreen extends Component {
             <Text style={styles.fontSmall}>あ</Text>
             <Text style={styles.fontBig}>あ</Text>
           </TouchableOpacity>
-        </View>
+        </SafeAreaView>
         <View style={styles.content}>
           {this._renderCategory(
             this.props.navigation.getParam('category'),
@@ -191,79 +259,7 @@ export default class ContentScreen extends Component {
             </TouchableOpacity>
           </View>
         ) : null}
-      </SafeAreaView>
+      </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  area: {
-    flex: 1,
-  },
-  header: {
-    height: hp(8),
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.babyBlue,
-  },
-  backButton: {
-    zIndex: 1,
-    alignSelf: 'center',
-    paddingHorizontal: wp(3),
-  },
-  content: {
-    flex: 1,
-  },
-  headerText: {
-    color: 'white',
-    fontSize: wp(5),
-    fontWeight: 'bold',
-    marginRight: wp(6),
-  },
-  headerImageTextView: {
-    flex: 1,
-    alignItems: 'center',
-    marginVertical: hp(1),
-  },
-  headerImage: {
-    height: '100%',
-    tintColor: 'white',
-    marginRight: wp(6),
-  },
-  fontBar: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: hp(8),
-    width: '100%',
-    backgroundColor: COLORS.blue,
-  },
-  fontButton: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: wp(3),
-    paddingVertical: hp(2),
-  },
-  fontSmall: {
-    fontSize: wp(3.5),
-    color: 'white',
-  },
-  fontBig: {
-    fontSize: wp(5),
-    color: 'white',
-  },
-  fontDefault: {
-    fontSize: wp(3),
-    color: 'white',
-  },
-  fontBarButton: {
-    marginHorizontal: wp(6),
-    width: hp(5),
-    height: hp(5),
-    borderWidth: wp(0.5),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: hp(1),
-    borderColor: 'white',
-  },
-});

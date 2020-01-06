@@ -58,7 +58,7 @@ async function get(url, ...params) {
     });
     return await today.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -82,7 +82,7 @@ export async function getProfile(messenger, context, category) {
     });
     return await today.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -98,7 +98,7 @@ export async function getSchedule() {
     });
     return await today.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -114,6 +114,6 @@ export async function getPeople() {
     });
     return await today.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

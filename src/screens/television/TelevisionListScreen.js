@@ -6,6 +6,11 @@ import ListParent from '../../components/ListParent';
 
 export default class TelevisionListScreen extends Component {
   render() {
+    const styles = StyleSheet.create({
+      mainStyles: {
+        flex: 1,
+      },
+    });
     return (
       <SafeAreaView style={styles.mainStyles}>
         <ListParent
@@ -16,9 +21,3 @@ export default class TelevisionListScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  mainStyles: {
-    flex: 1,
-  },
-});

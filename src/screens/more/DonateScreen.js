@@ -4,18 +4,46 @@ import {SafeAreaView} from 'react-navigation';
 import {JAPANESE} from '../../constants/japanese';
 import {openLink} from '../../helpers/linkHelper';
 import {URLS} from '../../constants/urls';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../../utils/dimensions';
 import COLORS from '../../constants/colors';
 
-export default class ListScreen extends Component {
+export default class DonateScreen extends Component {
   _onPress() {
     openLink(URLS.pbaDonation);
   }
 
   render() {
+    const styles = StyleSheet.create({
+      area: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      touchable: {
+        width: wp(80),
+        height: hp(60),
+        borderWidth: wp(0.5),
+        borderColor: COLORS.blue,
+        borderRadius: wp(3),
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      image: {
+        height: hp(50),
+        width: wp(70),
+        resizeMode: 'cover',
+      },
+      donateText: {
+        color: COLORS.darkOrange,
+        fontSize: wp(5.5),
+        fontWeight: 'bold',
+        marginBottom: hp(2),
+      },
+      warningText: {
+        fontSize: wp(3),
+        marginTop: hp(1),
+      },
+    });
     return (
       <SafeAreaView style={styles.area}>
         <Text style={styles.donateText}>{JAPANESE.messageDonation}</Text>
@@ -32,35 +60,3 @@ export default class ListScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  area: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  touchable: {
-    width: wp(75),
-    height: hp(60),
-    borderWidth: wp(0.5),
-    borderColor: COLORS.blue,
-    borderRadius: wp(3),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    height: hp(50),
-    width: wp(70),
-    resizeMode: 'cover',
-  },
-  donateText: {
-    color: COLORS.orange,
-    fontSize: wp(5),
-    fontWeight: 'bold',
-    marginBottom: hp(2),
-  },
-  warningText: {
-    fontSize: wp(3),
-    marginTop: hp(3),
-  },
-});

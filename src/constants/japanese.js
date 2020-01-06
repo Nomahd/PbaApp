@@ -7,6 +7,6 @@ export const JAPANESE = {
   tabRadio: 'ラジオ放送局',
   tabTelevision: 'テレビ放送局',
   tabDonation: '寄付',
-  messageDonation: 'パートナーとなってくださいますか',
+  messageDonation: 'パートナーとなってくださいますか？',
   warningExternal: '外部ブラウザを開きます',
 }

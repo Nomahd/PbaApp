@@ -1,14 +1,10 @@
+import {createSwitchNavigator, createAppContainer} from 'react-navigation';
 import {
-  createSwitchNavigator,
-  createStackNavigator,
-  createAppContainer,
   createBottomTabNavigator,
   createMaterialTopTabNavigator,
-} from 'react-navigation';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+} from 'react-navigation-tabs';
+import {createStackNavigator} from 'react-navigation-stack';
+import {wp, hp} from '../utils/dimensions';
 import SplashScreen from '../screens/SplashScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ContentScreen from '../screens/ContentScreen';

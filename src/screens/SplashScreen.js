@@ -4,10 +4,17 @@ import {getPeople, getSchedule, getTodayAll} from '../api/api';
 import {NAV} from '../navigators/Nav';
 import {connect} from 'react-redux';
 import {changeContentState} from '../redux/actions/actions';
+import SafeArea from 'react-native-safe-area';
+import {setDimensions, setHeightInset} from '../utils/dimensions';
 
 class SplashScreen extends Component {
   timedOut = false;
+
   async componentDidMount() {
+    SafeArea.getSafeAreaInsetsForRootView().then(result => {
+      setHeightInset(result.safeAreaInsets.top);
+      setDimensions();
+    });
     let timeout = this.startTimeout();
     const data = await getTodayAll();
     const schedule = await getSchedule();
@@ -26,6 +33,19 @@ class SplashScreen extends Component {
   }
 
   render() {
+    const styles = StyleSheet.create({
+      viewStyles: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+      },
+      imageStyles: {
+        width: '50%',
+        marginLeft: '10%',
+        flex: 1,
+      },
+    });
     return (
       <View style={styles.viewStyles}>
         <Image
@@ -42,17 +62,3 @@ export default connect(
   null,
   {changeContentState},
 )(SplashScreen);
-
-const styles = StyleSheet.create({
-  viewStyles: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-  imageStyles: {
-    width: '50%',
-    marginLeft: '10%',
-    flex: 1,
-  },
-});

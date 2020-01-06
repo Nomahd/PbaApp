@@ -10,15 +10,12 @@ import {
 import {connect} from 'react-redux';
 import {changeBatchState} from '../redux/actions/actions';
 import RNPickerSelect from 'react-native-picker-select';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../utils/dimensions';
 import {getBatch, getSearch} from '../api/api';
 import getModel from '../constants/models';
 import Icon from 'react-native-vector-icons/Ionicons';
 import COLORS from '../constants/colors';
-import {getContext} from '../constants/categories';
+import {CATEGORIES, getContext} from '../constants/categories';
 import {mapStateToProps} from '../helpers/mapStateToProps';
 
 class SearchArea extends Component {
@@ -53,11 +50,13 @@ class SearchArea extends Component {
     this.props.setLoading(true);
     const data = await getBatch(getModel(this.props.category));
     this.props.setLoading(false);
-    console.log(data);
     this.props.changeBatchState(data, this.props.category);
   }
   _onPressSearch = () => {
-    this._getSearch();
+    this._getSearch().then(data => {
+      this.props.setLoading(false);
+      this.props.changeBatchState(data, this.props.category);
+    });
   };
   async _getSearch() {
     if (
@@ -66,7 +65,7 @@ class SearchArea extends Component {
       this.state.searchText !== ''
     ) {
       this.props.setLoading(true);
-      const data = await getSearch(
+      return await getSearch(
         getModel(this.props.category),
         this.state.searchMonth,
         this.state.searchYear,
@@ -74,11 +73,104 @@ class SearchArea extends Component {
         this.state.searchMessenger,
         this.state.searchGuest,
       );
-      this.props.setLoading(false);
-      this.props.changeBatchState(data, this.props.category);
     }
   }
   render() {
+    const styles = StyleSheet.create({
+      searchContainer: {
+        alignSelf: 'center',
+        height: hp(25),
+        width: wp(90),
+      },
+      rowContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        marginTop: hp(2),
+      },
+      leftPicker: {
+        flex: 2,
+        marginRight: wp(1),
+      },
+      rightPicker: {
+        flex: 2,
+        marginLeft: wp(2),
+      },
+      keywordInput: {
+        flex: 5,
+        paddingLeft: wp(2),
+        marginRight: wp(2),
+        fontSize: wp(4),
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+      },
+      guestInput: {
+        flex: 2,
+        paddingLeft: wp(2),
+        marginLeft: wp(2),
+        fontSize: wp(4),
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+      },
+      buttonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        marginLeft: wp(2),
+      },
+      buttonSearch: {
+        flex: 1,
+        margin: wp(1),
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      buttonReset: {
+        flex: 1,
+        margin: wp(1),
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      resetButtonText: {
+        fontSize: wp(4),
+        color: COLORS.red,
+      },
+      searchTouchable: {
+        flex: 1,
+        marginLeft: wp(1),
+        width: '80%',
+        height: '100%',
+        justifyContent: 'center',
+      },
+      searchButton: {
+        alignSelf: 'center',
+      },
+      placeHolder: {
+        flex: 2,
+      },
+    });
+
+    const pickerSelectStyles = StyleSheet.create({
+      inputIOS: {
+        height: '100%',
+        fontSize: wp(4),
+        paddingLeft: wp(1),
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: COLORS.textColor,
+        paddingRight: 30, // to ensure the text is never behind the icon
+      },
+      inputAndroid: {
+        fontSize: hp(2),
+        paddingLeft: wp(1),
+        height: '100%',
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: COLORS.textColor,
+        paddingRight: 30, // to ensure the text is never behind the icon
+      },
+    });
     return (
       <View style={styles.searchContainer}>
         <View style={styles.rowContainer}>
@@ -160,30 +252,17 @@ class SearchArea extends Component {
                 />
               </View>
             ) : null}
-
-            {this.props.contentState.people.filter(
-              value =>
-                value.context === getContext(this.props.category) &&
-                value.category === 'guest',
-            ).length ? (
-              <View style={styles.rightPicker}>
-                <RNPickerSelect
-                  style={pickerSelectStyles}
-                  onValueChange={value => {
-                    this.setState({searchGuest: value});
-                  }}
-                  placeholder={{label: 'ゲスト', value: null}}
-                  items={this.props.contentState.people
-                    .filter(
-                      value =>
-                        value.context === getContext(this.props.category) &&
-                        value.category === 'guest',
-                    )
-                    .map(person => ({label: person.name, value: person.name}))}
-                  useNativeAndroidPickerStyle={false}
-                />
-              </View>
-            ) : null}
+            {this.props.category === CATEGORIES.television ? (
+              <TextInput
+                style={styles.guestInput}
+                placeholder="ゲスト"
+                onChangeText={text => {
+                  this.setState({searchGuest: text});
+                }}
+              />
+            ) : (
+              <View style={styles.placeHolder} />
+            )}
           </View>
         ) : null}
       </View>
@@ -195,87 +274,3 @@ export default connect(
   mapStateToProps,
   {changeBatchState},
 )(SearchArea);
-
-const styles = StyleSheet.create({
-  searchContainer: {
-    alignSelf: 'center',
-    height: hp(25),
-    width: wp(90),
-  },
-  rowContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    marginTop: hp(2),
-  },
-  leftPicker: {
-    flex: 2,
-    marginRight: wp(1),
-  },
-  rightPicker: {
-    flex: 2,
-    marginLeft: wp(2),
-  },
-  keywordInput: {
-    flex: 5,
-    paddingLeft: wp(2),
-    marginRight: wp(2),
-    fontSize: wp(4),
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    marginLeft: wp(2),
-  },
-  buttonSearch: {
-    flex: 1,
-    margin: wp(1),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonReset: {
-    flex: 1,
-    margin: wp(1),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  resetButtonText: {
-    fontSize: wp(4),
-    color: COLORS.red,
-  },
-  searchTouchable: {
-    flex: 1,
-    marginLeft: wp(1),
-    width: '80%',
-    height: '100%',
-    justifyContent: 'center',
-  },
-  searchButton: {
-    alignSelf: 'center',
-  },
-});
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    height: '100%',
-    fontSize: wp(4),
-    paddingLeft: wp(1),
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: COLORS.textColor,
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: hp(2),
-    paddingLeft: wp(1),
-    height: '100%',
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: COLORS.textColor,
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});

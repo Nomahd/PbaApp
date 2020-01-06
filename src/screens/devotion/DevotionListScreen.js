@@ -6,19 +6,18 @@ import ListParent from '../../components/ListParent';
 
 export default class RadioListScreen extends Component {
   render() {
+    const styles = StyleSheet.create({
+      mainStyles: {
+        flex: 1,
+      },
+    });
     return (
       <SafeAreaView style={styles.mainStyles}>
         <ListParent
           category={CATEGORIES.devotion}
-          headerText="日々デボーション"
+          headerText="今週のデボーション"
         />
       </SafeAreaView>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  mainStyles: {
-    flex: 1,
-  },
-});

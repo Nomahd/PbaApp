@@ -9,13 +9,13 @@ import {
 import {SafeAreaView} from 'react-navigation';
 
 import {connect} from 'react-redux';
-import listScreenStyles from '../../styles/stationListScreenStyles';
 import {JAPANESE} from '../../constants/japanese';
 import {openLink} from '../../helpers/linkHelper';
 import {URLS} from '../../constants/urls';
 import ScheduleBlock from '../../components/ScheduleBlock';
 import COLORS from '../../constants/colors';
 import {mapStateToProps} from '../../helpers/mapStateToProps';
+import {hp, wp} from '../../utils/dimensions';
 
 class RadioStationListScreen extends Component {
   _openPage = () => {
@@ -34,34 +34,64 @@ class RadioStationListScreen extends Component {
         element.category === 'ラジオ' &&
         element.program === '世の光いきいきタイム',
     );
-
+    const styles = StyleSheet.create({
+      scrollArea: {
+        flex: 1,
+      },
+      scrollContent: {
+        alignItems: 'center',
+      },
+      button: {
+        borderRadius: wp(3),
+        borderWidth: wp(0.25),
+        marginTop: hp(2),
+        width: wp(60),
+        height: hp(15),
+        paddingVertical: hp(2),
+        alignItems: 'center',
+      },
+      logo: {
+        flex: 1,
+        resizeMode: 'contain',
+        width: '90%',
+      },
+      warningText: {
+        fontSize: wp(2.5),
+        marginTop: hp(0.5),
+        color: COLORS.textColor,
+      },
+      color: {
+        backgroundColor: COLORS.yonohikariGreen,
+        borderColor: COLORS.yonohikariGreen,
+      },
+    });
     return (
       <ScrollView
-        style={listScreenStyles.scrollArea}
-        contentContainerStyle={listScreenStyles.scrollContent}
+        style={styles.scrollArea}
+        contentContainerStyle={styles.scrollContent}
         keyExtractor={(item, index) => index.toString()}>
         <TouchableOpacity
           style={[
-            listScreenStyles.button,
+            styles.button,
             {borderColor: COLORS.yonohikariGreen},
           ]}
           onPress={this._openPage.bind(this)}>
           <Image
-            style={listScreenStyles.logo}
+            style={styles.logo}
             source={require('../../../res/img/logo_YNH.png')}
           />
         </TouchableOpacity>
-        <Text style={listScreenStyles.warningText}>
+        <Text style={styles.warningText}>
           {JAPANESE.warningExternal}
         </Text>
         {schedule1.length === 0 ? null : (
-          <ScheduleBlock colorStyle={style.color} rows={schedule1} />
+          <ScheduleBlock colorStyle={styles.color} rows={schedule1} />
         )}
         {schedule2.length === 0 ? null : (
-          <ScheduleBlock colorStyle={style.color} rows={schedule2} />
+          <ScheduleBlock colorStyle={styles.color} rows={schedule2} />
         )}
         {schedule3.length === 0 ? null : (
-          <ScheduleBlock colorStyle={style.color} rows={schedule3} />
+          <ScheduleBlock colorStyle={styles.color} rows={schedule3} />
         )}
       </ScrollView>
     );
@@ -69,9 +99,3 @@ class RadioStationListScreen extends Component {
 }
 
 export default connect(mapStateToProps)(RadioStationListScreen);
-const style = StyleSheet.create({
-  color: {
-    backgroundColor: COLORS.yonohikariGreen,
-    borderColor: COLORS.yonohikariGreen,
-  },
-});

@@ -11,6 +11,5 @@ const CONTEXT = {
 };
 
 export function getContext(category) {
-  console.log(CONTEXT[category]);
   return CONTEXT[category];
 }

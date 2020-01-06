@@ -1,5 +1,6 @@
 import React from 'react';
-import {SafeAreaView, MaterialTopTabBar} from 'react-navigation';
+import {SafeAreaView} from 'react-navigation';
+import {MaterialTopTabBar} from 'react-navigation-tabs';
 
 const SafeAreaMaterialTopTabBar = ({...props}) => (
   <SafeAreaView>

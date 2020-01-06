@@ -7,10 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import ContentTitle from '../../components/ContentTitle';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../../utils/dimensions';
 import COLORS from '../../constants/colors';
 
 export default class DevotionItemScreen extends Component {
@@ -33,6 +30,26 @@ export default class DevotionItemScreen extends Component {
   }
 
   render() {
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      activityIndicator: {
+        marginTop: hp(5),
+      },
+      contentView: {
+        marginHorizontal: wp(2),
+      },
+      info: {
+        color: COLORS.textColor,
+        fontWeight: 'bold',
+        fontSize: wp(4),
+        marginBottom: hp(2),
+      },
+      body: {
+        color: COLORS.textColor,
+      },
+    });
     return this.state.data != null ? (
       <ScrollView style={styles.container}>
         <ContentTitle title={this.state.data.title} />
@@ -58,24 +75,3 @@ export default class DevotionItemScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  activityIndicator: {
-    marginTop: hp(5),
-  },
-  contentView: {
-    marginHorizontal: wp(2),
-  },
-  info: {
-    color: COLORS.textColor,
-    fontWeight: 'bold',
-    fontSize: wp(4),
-    marginBottom: hp(2),
-  },
-  body: {
-    color: COLORS.textColor,
-  },
-});

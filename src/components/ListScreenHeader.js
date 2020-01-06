@@ -8,10 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp} from '../utils/dimensions';
 import COLORS from '../constants/colors';
 
 class ListScreenHeader extends Component {
@@ -21,17 +18,59 @@ class ListScreenHeader extends Component {
   };
 
   render() {
+    const styles = StyleSheet.create({
+      headerView: {
+        marginTop: hp(1),
+        height: hp(10),
+        flexDirection: 'row',
+        width: wp(90),
+        alignSelf: 'center',
+      },
+      headerText: {
+        alignSelf: 'flex-end',
+        fontSize: wp(8),
+        fontWeight: 'bold',
+      },
+      headerImageView: {
+        flex: 3,
+        // backgroundColor: 'red',
+      },
+      headerImage: {
+        height: '100%',
+        width: hp(40),
+        // backgroundColor: 'yellow',
+      },
+      searchButton: {
+        alignSelf: 'center',
+      },
+      searchView: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+      },
+      searchTouchable: {
+        backgroundColor: COLORS.blue,
+        width: wp(10),
+        height: wp(10),
+        borderRadius: wp(10) / 2,
+        justifyContent: 'center',
+      },
+    });
     return (
       <View style={styles.headerView}>
         {this.props.headerText !== null ? (
           <Text style={styles.headerText}>{this.props.headerText}</Text>
         ) : null}
         {this.props.headerImage !== null ? (
-          <Image
-            style={styles.headerImage}
-            source={this.props.headerImage}
-            resizeMode="contain"
-          />
+          <View style={styles.headerImageView}>
+            <Image
+              style={styles.headerImage}
+              imageStyle
+              source={this.props.headerImage}
+              resizeMode="contain"
+            />
+          </View>
         ) : null}
         <View style={styles.searchView}>
           {!this.props.search ? (
@@ -53,38 +92,3 @@ class ListScreenHeader extends Component {
 }
 
 export default ListScreenHeader;
-
-export const styles = StyleSheet.create({
-  headerView: {
-    marginTop: hp(1),
-    height: hp(10),
-    flexDirection: 'row',
-    width: wp(90),
-    alignSelf: 'center',
-  },
-  headerText: {
-    alignSelf: 'flex-end',
-    fontSize: hp(5),
-    fontWeight: 'bold',
-  },
-  headerImage: {
-    height: '100%',
-    flex: 3,
-  },
-  searchButton: {
-    alignSelf: 'center',
-  },
-  searchView: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  searchTouchable: {
-    backgroundColor: COLORS.blue,
-    width: wp(10),
-    height: wp(10),
-    borderRadius: wp(10) / 2,
-    justifyContent: 'center',
-  },
-});

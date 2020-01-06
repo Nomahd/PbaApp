@@ -11,14 +11,10 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {mapStateToProps} from '../helpers/mapStateToProps';
-import {DATES} from '../constants/dates';
 import {SafeAreaView} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {NAV} from '../navigators/Nav';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import {wp, hp, hhp} from '../utils/dimensions';
 import {CATEGORIES} from '../constants/categories';
 import Orientation from 'react-native-orientation-locker';
 import {getBackground} from '../helpers/backgroundHelper';
@@ -38,7 +34,7 @@ class HomeScreen extends Component {
       const newDate = new Date();
       this.setState({date: newDate});
     });
-    this.blurSub = this.props.navigation.addListener('willBlur', () => {
+    this.blurSub = this.props.navigation.addListener('didBlur', () => {
       let nextBackground = this.state.currentBackground + 1;
       if (nextBackground < this.state.backgroundImageCount) {
         this.setState({currentBackground: nextBackground});
@@ -93,8 +89,102 @@ class HomeScreen extends Component {
       this.state.currentBackground,
       this.state.backgroundImageCount,
     );
+
+    const styles = StyleSheet.create({
+      mainView: {
+        flex: 1,
+        alignSelf: 'center',
+        width: '100%',
+      },
+      videoImageTouchable: {
+        height: hp(65),
+        justifyContent: 'flex-end',
+      },
+      videoImageBackground: {
+        height: '100%',
+        backgroundColor: 'grey',
+        justifyContent: 'flex-end',
+      },
+      videoImage: {
+        resizeMode: 'cover',
+      },
+      videoImageOverlay: {
+        height: '30%',
+        width: '100%',
+        justifyContent: 'center',
+        backgroundColor: COLORS.transparentBlack,
+      },
+      videoImageOverlayHeader: {
+        color: 'white',
+        fontSize: wp(6),
+        alignSelf: 'center',
+      },
+      videoImageOverlayTitle: {
+        marginTop: hp(2),
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: wp(6),
+        alignSelf: 'center',
+        marginHorizontal: wp(2),
+      },
+      subView: {
+        flex: 1,
+      },
+      bottomContentTouchables: {
+        flex: 1,
+        flexDirection: 'row',
+      },
+      bottomIconWrapper: {
+        marginLeft: wp(5),
+        alignSelf: 'center',
+        justifyContent: 'center',
+        height: '80%',
+        aspectRatio: 1,
+        borderRadius: hp(1),
+        backgroundColor: COLORS.babyBlue,
+      },
+      bottomIcons: {
+        alignSelf: 'center',
+      },
+      bottomTextViews: {
+        flex: 1,
+        marginTop: hhp(2),
+        marginLeft: wp(5),
+        flexDirection: 'column',
+      },
+      bottomHeadersiOS: {
+        fontSize: hhp(3.5),
+        color: COLORS.textColor,
+      },
+      bottomHeadersAndroid: {
+        fontSize: hp(3),
+        color: COLORS.textColor,
+      },
+      bottomTitlesiOS: {
+        marginRight: wp(2),
+        fontWeight: 'bold',
+        fontSize: hhp(3.5),
+        color: COLORS.textColor,
+      },
+      bottomTitlesAndroid: {
+        marginRight: wp(2),
+        fontWeight: 'bold',
+        fontSize: hp(3),
+        color: COLORS.textColor,
+      },
+      bottomTitleMarginiOS: {
+        marginTop: hhp(2),
+      },
+      activityIndicator: {
+        alignSelf: 'flex-start',
+      },
+      activityIndicatorTop: {
+        alignSelf: 'center',
+      },
+    });
+
     return (
-      <SafeAreaView style={styles.mainView}>
+      <View style={styles.mainView}>
         <TouchableOpacity
           style={styles.videoImageTouchable}
           onPress={this._openTodayTelevision.bind(this)}>
@@ -134,15 +224,17 @@ class HomeScreen extends Component {
               />
             </View>
             <View style={styles.bottomTextViews}>
-              <Text style={styles.bottomHeaders}>
-                {this.state.date.getMonth()}月{this.state.date.getDate()}日 (
-                {DATES[this.state.date.getDay()]}) 日デボーション
+              <Text style={Platform.OS === 'ios' ? styles.bottomHeadersiOS : styles.bottomHeadersAndroid}>
+                今週のデボーション
               </Text>
               {devotionTitle !== null ? (
                 <Text
                   style={[
-                    styles.bottomTitles,
                     {fontWeight: 'bold'},
+                    Platform.OS === 'ios'
+                      ? styles.bottomTitlesiOS
+                      : styles.bottomTitlesAndroid,
+                    Platform.OS === 'ios' && styles.bottomTitleMarginiOS,
                   ]}
                   numberOfLines={1}>
                   {devotionTitle}
@@ -167,10 +259,16 @@ class HomeScreen extends Component {
               />
             </View>
             <View style={styles.bottomTextViews}>
-              <Text style={styles.bottomHeaders}>今日のラジオ</Text>
+              <Text style={Platform.OS === 'ios' ? styles.bottomHeadersiOS : styles.bottomHeadersAndroid}>今日のラジオ</Text>
               {audioTitle !== null ? (
                 <Text
-                  style={[styles.bottomTitles, {fontWeight: 'bold'}]}
+                  style={[
+                    {fontWeight: 'bold'},
+                    Platform.OS === 'ios'
+                      ? styles.bottomTitlesiOS
+                      : styles.bottomTitlesAndroid,
+                    Platform.OS === 'ios' && styles.bottomTitleMarginiOS,
+                  ]}
                   numberOfLines={1}>
                   {audioTitle}
                 </Text>
@@ -183,91 +281,9 @@ class HomeScreen extends Component {
             </View>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
 
 export default connect(mapStateToProps)(HomeScreen);
-
-const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    alignSelf: 'center',
-    width: '100%',
-  },
-  videoImageTouchable: {
-    height: hp(65),
-    justifyContent: 'flex-end',
-  },
-  videoImageBackground: {
-    height: '100%',
-    backgroundColor: 'grey',
-    justifyContent: 'flex-end',
-  },
-  videoImage: {
-    resizeMode: 'stretch',
-    alignSelf: 'flex-start',
-  },
-  videoImageOverlay: {
-    height: '30%',
-    width: '100%',
-    justifyContent: 'center',
-    backgroundColor: COLORS.transparentBlack,
-  },
-  videoImageOverlayHeader: {
-    color: 'white',
-    fontSize: wp(6),
-    alignSelf: 'center',
-  },
-  videoImageOverlayTitle: {
-    marginTop: hp(2),
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: wp(6),
-    alignSelf: 'center',
-    marginHorizontal: wp(2),
-  },
-  subView: {
-    flex: 1,
-  },
-  bottomContentTouchables: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  bottomIconWrapper: {
-    marginLeft: wp(5),
-    alignSelf: 'center',
-    justifyContent: 'center',
-    height: '80%',
-    aspectRatio: 1,
-    borderRadius: hp(1),
-    backgroundColor: COLORS.babyBlue,
-  },
-  bottomIcons: {
-    alignSelf: 'center',
-  },
-  bottomTextViews: {
-    flex: 1,
-    marginTop: hp(1),
-    marginLeft: wp(5),
-    flexDirection: 'column',
-  },
-  bottomHeaders: {
-    fontSize: wp(4),
-    color: COLORS.textColor,
-  },
-  bottomTitles: {
-    marginRight: wp(2),
-    fontWeight: 'bold',
-    fontSize: wp(5),
-    marginTop: hp(1),
-    color: COLORS.textColor,
-  },
-  activityIndicator: {
-    alignSelf: 'flex-start',
-  },
-  activityIndicatorTop: {
-    alignSelf: 'center',
-  },
-});

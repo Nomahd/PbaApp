@@ -5,6 +5,7 @@ const COLORS = {
   babyBlue: '#7dd0ee',
   blue: '#69b1ff',
   orange: '#ffc78d',
+  darkOrange: '#f88724',
   red: '#ff4c4d',
   yonohikariGreen: '#57b435',
   lifelineBlue: '#50a1d5',
