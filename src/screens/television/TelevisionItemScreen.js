@@ -91,7 +91,7 @@ export default class TelevisionItemScreen extends Component {
                   var iframe = document.querySelector('#video');
                   let options = {
                           url: "${this.state.data.link}",
-                          width: ${wp(95)},
+                          width: ${wp(90)},
                           byline: false,
                           title: false,
                           portrait: false,
